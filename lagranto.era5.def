@@ -1,0 +1,46 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+    apt update
+    apt install wget -y
+    apt install csh -y
+    apt install make -y
+    apt install libnetcdf-dev -y
+    apt install libnetcdff-dev -y
+    apt install gfortran -y
+    apt install bc -y
+    apt clean
+
+    # Please contact Michael Sprenger [michael.sprenger@env.ethz.ch] to get access to the Lagranto source code.
+    # Replace [User], [Password] and [FTP-Server] with the provided credentials.
+    wget -m -nH --cut-dirs=3 ftp://[User]:[Password]@[FTP-Server]/michaesp/lagranto.era5.test/lagranto.shellscript -P /opt/lagranto
+
+    sed -i 's:setenv FORTRAN gfortran:setenv FORTRAN "gfortran -fallow-argument-mismatch":' /opt/lagranto/install.csh
+    sed -i -z 's:else\n  echo "Fortran Compiler ${FORTRAN} not supported... Exit"\n  exit 1::' /opt/lagranto/install.csh
+    sed -i 's:ln -svf ${LAGRANTO}/bin/lagranto            lagranto.sh::' /opt/lagranto/install.csh
+    sed -i 's:ln -svf ${LAGRANTO}/bin/lagranto            lagranto.era5::' /opt/lagranto/install.csh
+    sed -i 's:ln -svf ${LAGRANTO}/bin/lagrantohelp        lagrantohelp.sh::' /opt/lagranto/install.csh
+    sed -i 's:ln -svf ${LAGRANTO}/bin/lagrantohelp        lagrantohelp.era5::' /opt/lagranto/install.csh
+    chmod u+x /opt/lagranto/install.csh
+    chmod u+x /opt/lagranto/tools/tracal.install
+    cd /opt/lagranto/
+    /opt/lagranto/install.csh all
+    find /opt/lagranto -name "*.sh" -exec chmod u+x {} +
+    find /opt/lagranto -name "*.perl" -exec chmod u+x {} +
+
+%environment
+    export LAGRANTO=/opt/lagranto
+    export PATH=/opt/lagranto/bin:$PATH
+    export LC_ALL=C
+
+%labels
+    Author Paul Rothenberg
+    E-Mail va34edit@studserv.uni-leipzig.de
+
+%help
+    Lagranto container for trajectory calculations with ERA5 data.
+    Recommended startup command:
+    apptainer shell -C -B /path/to/data/on/host/system:/mnt --writable-tmpfs -f lagranto.era5.sif
+    Manual for Lagranto:
+    /opt/lagranto/docu/reference/reference.pdf
