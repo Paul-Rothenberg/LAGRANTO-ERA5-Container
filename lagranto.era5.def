@@ -10,6 +10,8 @@ From: ubuntu:22.04
     apt install libnetcdff-dev -y
     apt install gfortran -y
     apt install bc -y
+    apt install groff-base -y
+    apt install less -y
     apt clean
 
     # Please contact Michael Sprenger [michael.sprenger@env.ethz.ch] to get access to the Lagranto source code.
@@ -18,10 +20,6 @@ From: ubuntu:22.04
 
     sed -i 's:setenv FORTRAN gfortran:setenv FORTRAN "gfortran -fallow-argument-mismatch":' /opt/lagranto/install.csh
     sed -i -z 's:else\n  echo "Fortran Compiler ${FORTRAN} not supported... Exit"\n  exit 1::' /opt/lagranto/install.csh
-    sed -i 's:ln -svf ${LAGRANTO}/bin/lagranto            lagranto.sh::' /opt/lagranto/install.csh
-    sed -i 's:ln -svf ${LAGRANTO}/bin/lagranto            lagranto.era5::' /opt/lagranto/install.csh
-    sed -i 's:ln -svf ${LAGRANTO}/bin/lagrantohelp        lagrantohelp.sh::' /opt/lagranto/install.csh
-    sed -i 's:ln -svf ${LAGRANTO}/bin/lagrantohelp        lagrantohelp.era5::' /opt/lagranto/install.csh
     chmod u+x /opt/lagranto/install.csh
     chmod u+x /opt/lagranto/tools/tracal.install
     cd /opt/lagranto/
@@ -43,4 +41,4 @@ From: ubuntu:22.04
     Recommended startup command:
     apptainer shell -C -B /path/to/data/on/host/system:/mnt --writable-tmpfs -f lagranto.era5.sif
     Manual for Lagranto:
-    /opt/lagranto/docu/reference/reference.pdf
+    /opt/lagranto/docu/reference/reference.pdf or run lagrantohelp
